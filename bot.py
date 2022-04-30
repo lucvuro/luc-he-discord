@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix="!")
 bot.add_cog(database.DatabaseBANDOSAO(bot))
 #Connect to database
 async def create_db_pool():
-    bot.db = await asyncpg.create_pool(dsn='postgres://postgres:lucvu123@localhost:5432/discord')
+    bot.db = await asyncpg.create_pool(dsn='postgres://lktbgprxgsumxy:a50f0706ca87bdaa5af8dced7615edc569a291de7d5fb221db417d3d6aadd4ec@ec2-52-3-200-138.compute-1.amazonaws.com:5432/d2jn5aebkji9uh')
     print("Ket noi toi database thanh cong")
 
 @bot.event
