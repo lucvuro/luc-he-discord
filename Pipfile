@@ -15,6 +15,7 @@ youtube-dl = "*"
 pynacl = "*"
 python-dateutil = "*"
 ffmpeg = "*"
+wheel = "*"
 
 [dev-packages]
 ipykernel = "*"

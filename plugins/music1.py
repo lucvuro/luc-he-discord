@@ -253,7 +253,7 @@ class VoiceState:
 
                 # self.current.source.volume = self._volume
                 # self.voice.play(self.current.source, after=self.play_next_song)
-            self.now = discord.FFmpegPCMAudio(self.current.source.stream_url,**YTDLSource.FFMPEG_OPTIONS)
+            self.now = discord.FFmpegPCMAudio(self.current.source.stream_url)
             self.voice.play(self.now,after=self.play_next_song)
             # await self.current.source.channel.send(embed=self.current.create_embed())
 
