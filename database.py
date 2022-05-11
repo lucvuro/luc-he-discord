@@ -95,6 +95,7 @@ class DatabaseBANDOSAO(commands.Cog):
                 form.set_timeout(30)
                 result = await form.start()
                 bandosao = BanDoSao(result.hovaten,result.gioitinh,result.ngaysinh,result.giosinh)
+                await ctx.send("Vui lòng đợi vài chục giây để xử lý")
                 if bandosao.check_type() == True:
                     link_image,cungmattroi,cungmattrang,cungmoc,nha = bandosao.taobandosao()
                     #Embed
