@@ -238,7 +238,6 @@ class VoiceState:
     async def audio_player_task(self):
         while True:
             self.next.clear()
-            self.now = None
             if self.loop == False:
                 # Try to get the next song within 3 minutes.
                 # If no song will be added to the queue in time,
@@ -253,8 +252,7 @@ class VoiceState:
 
                 # self.current.source.volume = self._volume
                 # self.voice.play(self.current.source, after=self.play_next_song)
-            self.now = discord.FFmpegPCMAudio(self.current.source.stream_url)
-            self.voice.play(self.now,after=self.play_next_song)
+            self.voice.play(discord.FFmpegPCMAudio(self.current.source.stream_url),after=self.play_next_song)
             # await self.current.source.channel.send(embed=self.current.create_embed())
 
             await self.next.wait()
