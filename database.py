@@ -86,16 +86,16 @@ class DatabaseBANDOSAO(commands.Cog):
         try:
             await self.check_add_user(ctx.author.id)
             if await self.check_bandosao(ctx) == False:
-                form = Form(ctx,"BẢN ĐỒ SAO CÁ NHÂN")
+                form = Form(ctx,"BẢN ĐỒ SAO CÁ NHÂN",cleanup=True)
                 form.add_question("Nhập đầy đủ HỌ VÀ TÊN của bạn",'hovaten')
                 form.add_question("Giới tính của bạn là gì? (Nam/Nữ)",'gioitinh')
                 form.add_question("Ngày tháng năm sinh của bạn là gì? (dd/mm/yyyy)",'ngaysinh')
                 form.add_question("Giờ sinh của bạn là gì? (hh:mm)(nếu không biết thì để 12:00)",'giosinh')
                 form.edit_and_delete(True)
-                form.set_timeout(30)
+                form.set_timeout(60)
                 result = await form.start()
-                bandosao = BanDoSao(result.hovaten,result.gioitinh,result.ngaysinh,result.giosinh)
                 await ctx.send("Vui lòng đợi vài chục giây để xử lý")
+                bandosao = BanDoSao(result.hovaten,result.gioitinh,result.ngaysinh,result.giosinh)
                 if bandosao.check_type() == True:
                     link_image,cungmattroi,cungmattrang,cungmoc,nha = bandosao.taobandosao()
                     #Embed
