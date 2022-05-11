@@ -90,7 +90,7 @@ class DatabaseBANDOSAO(commands.Cog):
                 form.add_question("Nhập đầy đủ HỌ VÀ TÊN của bạn",'hovaten')
                 form.add_question("Giới tính của bạn là gì? (Nam/Nữ)",'gioitinh')
                 form.add_question("Ngày tháng năm sinh của bạn là gì? (dd/mm/yyyy)",'ngaysinh')
-                form.add_question("Giờ sinh của bạn là gì? (hh:mm)",'giosinh')
+                form.add_question("Giờ sinh của bạn là gì? (hh:mm)(nếu không biết thì để 12:00)",'giosinh')
                 form.edit_and_delete(True)
                 form.set_timeout(30)
                 result = await form.start()
