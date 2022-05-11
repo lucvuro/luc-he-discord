@@ -5,7 +5,7 @@ import datetime
 list12chd = {
     "aries":{
         "id": 1,
-        "name": "lBạch Dương"
+        "name": "Bạch Dương"
     },
     "taurus":{
         "id": 2,
@@ -31,7 +31,7 @@ list12chd = {
         "id": 7,
         "name": "Thiên Bình"
     },
-    "scorpio":{
+    "scorpius":{
         "id": 8,
         "name": "Thiên Yết"
     },
@@ -93,7 +93,6 @@ class BanDoSao:
             if int(gio) >= 0 and int(gio) < 12 or int(gio) == 24:
                 if int(gio) == 0 or int(gio)==24:
                     gio = "12"
-                print(gio,phut,"AM")
                 return gio,phut,"AM"
             elif int(gio) >= 12 and int(gio) <24:
                 gio = str(int(gio)-12)
@@ -115,6 +114,16 @@ class BanDoSao:
                 return name
     def get_chd(key,attribute):
         return list12chd[f'{key}'][f'{attribute}']
+    def taonha(chd):
+        chd_eng = BanDoSao.ten_tieng_anh_chd(chd)
+        list_keys = list(list12chd.keys())
+        chd_pos = BanDoSao.get_chd(chd_eng,'id') - 1
+        nha = []
+        for i in range(chd_pos,len(list_keys)):
+            nha.append(list_keys[i])
+        for i in range(chd_pos):
+            nha.append(list_keys[i])
+        return nha
     def taobandosao(self):
         # url = "http://astroviet.com/ban-do-sao/
         # tach ngay sinh
@@ -165,8 +174,9 @@ class BanDoSao:
             cungmattrang = BanDoSao.tach_chuoi_lay_chu(list_tr_tbody1[2].find_all("td")[1].text)
             list_tr_tbody2 = tbody_list[1].find_all("tr")
             cungmoc = BanDoSao.tach_chuoi_lay_chu(list_tr_tbody2[1].find_all("td")[1].text)
-            return link_image,cungmattroi,cungmattrang,cungmoc
+            nha = BanDoSao.taonha(cungmoc)
+            return link_image,cungmattroi,cungmattrang,cungmoc,nha
         except:
             pass
 if __name__ == '__main__':
-    BanDoSao.chuyen_gio_sinh('05:00')
+    BanDoSao.taonha("Nhân Mã")

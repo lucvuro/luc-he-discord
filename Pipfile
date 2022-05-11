@@ -11,6 +11,8 @@ requests = "*"
 bs4 = "*"
 html5lib = "*"
 asyncpg = "*"
+youtube-dl = "*"
+pynacl = "*"
 
 [dev-packages]
 ipykernel = "*"
