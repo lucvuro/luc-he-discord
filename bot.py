@@ -10,7 +10,7 @@ from plugins.bandosao import BanDoSao
 from plugins import sleepyti,music1
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-my_whitelist = [883625186333704252,646989878055403521,881153070111809628]
+my_whitelist = [883625186333704252,646989878055403521,881153070111809628,353167358388338699]
 bot = commands.Bot(command_prefix="~", help_command=None)
 @bot.check_once
 async def whitelist(ctx):
