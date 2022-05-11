@@ -13,6 +13,7 @@ html5lib = "*"
 asyncpg = "*"
 youtube-dl = "*"
 pynacl = "*"
+python-dateutil = "*"
 
 [dev-packages]
 ipykernel = "*"
