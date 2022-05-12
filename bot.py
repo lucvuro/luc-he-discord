@@ -12,7 +12,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 my_whitelist = [883625186333704252,646989878055403521,881153070111809628,353167358388338699]
 activity = Game(name="~help")
-bot = commands.Bot(command_prefix="~", help_command=None)
+bot = commands.Bot(command_prefix="~",activity=activity, help_command=None)
 @bot.check_once
 async def whitelist(ctx):
     return ctx.guild.id in my_whitelist
