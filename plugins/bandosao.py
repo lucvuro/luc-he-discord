@@ -58,10 +58,10 @@ class BanDoSao:
         self.gioitinh = gioitinh
         self.ngaysinh = ngaysinh
         self.giosinh = giosinh
-    def check_type(self):
-        check_ngaysinh = BanDoSao.tachngaysinh(self.ngaysinh)
-        check_giosinh = BanDoSao.chuyen_gio_sinh(self.giosinh)
-        check_gt = BanDoSao.check_gioitinh(self.gioitinh)
+    def check_type(result):
+        check_ngaysinh = BanDoSao.tachngaysinh(result.ngaysinh)
+        check_giosinh = BanDoSao.chuyen_gio_sinh(result.giosinh)
+        check_gt = BanDoSao.check_gioitinh(result.gioitinh)
         if check_ngaysinh == False or check_giosinh == False or check_gt == False:
             return False
         return True
@@ -124,11 +124,12 @@ class BanDoSao:
         for i in range(chd_pos):
             nha.append(list_keys[i])
         return nha
-    def taobandosao(self):
+    def taobandosao(result):
         # url = "http://astroviet.com/ban-do-sao/
         # tach ngay sinh
-        ngay,thang,nam = BanDoSao.tachngaysinh(self.ngaysinh)
-        gio,phut,amorpm = BanDoSao.chuyen_gio_sinh(self.giosinh)
+        ngay,thang,nam = BanDoSao.tachngaysinh(result.ngaysinh)
+        gio,phut,amorpm = BanDoSao.chuyen_gio_sinh(result.giosinh)
+        print(gio,phut,amorpm)
         try:
             headers = {
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -144,8 +145,8 @@ class BanDoSao:
             }
 
             data = {
-                'natal_name': f'{self.name}',
-                'natal_gender': f'{self.gioitinh}',
+                'natal_name': f'{result.hovaten}',
+                'natal_gender': f'{result.gioitinh}',
                 'address': 'Thành phố Hồ Chí Minh',
                 'lat': '',
                 'lon': '',
@@ -164,6 +165,7 @@ class BanDoSao:
                 'ns': '',
                 'natal_submitted': '0',
             }
+            print(data)
             response = requests.post('http://astroviet.com/ban-do-sao/',headers=headers, data=data, verify=False)
             soup = BeautifulSoup(response.content, 'html5lib')
             article_4816 = soup.find_all("article", {"id": "page-4816"})

@@ -252,9 +252,11 @@ class VoiceState:
 
                 # self.current.source.volume = self._volume
                 # self.voice.play(self.current.source, after=self.play_next_song)
-            self.voice.play(discord.FFmpegPCMAudio(self.current.source.stream_url),after=self.play_next_song)
+                self.voice.play(self.current.source, after=self.play_next_song)
             # await self.current.source.channel.send(embed=self.current.create_embed())
-
+            elif self.loop == True:
+                self.now = discord.FFmpegPCMAudio(self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS)
+                self.voice.play(self.now, after=self.play_next_song)
             await self.next.wait()
             # self.current = None
     def play_next_song(self, error=None):
@@ -331,36 +333,37 @@ class Music(commands.Cog):
             return
         if isinstance(error,commands.CheckFailure):
             return await ctx.send("Server của bạn hiện tại không nằm trong whitelist!\nVui lòng liên hệ với chủ bot để được thêm vào whitelist")
-        await ctx.send('Có lỗi xảy ra: {}'.format(str(error)))
+        await ctx.send('{}'.format(str(error)))
 
     @commands.command(name='join', invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
         """Joins a voice channel."""
-
+        if not ctx.author.voice:
+            raise commands.CommandError('Bạn đang không ở trong kênh voice nào cả.')
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
             await ctx.voice_state.voice.move_to(destination)
+            await ctx.send("222222")
             return
-
         ctx.voice_state.voice = await destination.connect()
         await ctx.send("222222")
-    @commands.command(name='summon')
-    @commands.has_permissions(manage_guild=True)
-    async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
-        """Summons the bot to a voice channel.
-        If no channel was specified, it joins your channel.
-        """
+    # @commands.command(name='summon')
+    # @commands.has_permissions(manage_guild=True)
+    # async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
+    #     """Summons the bot to a voice channel.
+    #     If no channel was specified, it joins your channel.
+    #     """
 
-        if not channel and not ctx.author.voice:
-            raise VoiceError('Bạn đang không trong voice hoặc là bạn đang triệu hồi tui tới 1 kênh ẩn mà trong đó không có tui..')
+    #     if not channel and not ctx.author.voice:
+    #         raise VoiceError('Bạn đang không trong voice hoặc là bạn đang triệu hồi tui tới 1 kênh ẩn mà trong đó không có tui..')
 
-        destination = channel or ctx.author.voice.channel
-        if ctx.voice_state.voice:
-            await ctx.voice_state.voice.move_to(destination)
-            return
+    #     destination = channel or ctx.author.voice.channel
+    #     if ctx.voice_state.voice:
+    #         await ctx.voice_state.voice.move_to(destination)
+    #         return
 
-        ctx.voice_state.voice = await destination.connect()
-        await ctx.send("222222")
+    #     ctx.voice_state.voice = await destination.connect()
+    #     await ctx.send("222222")
     @commands.command(name='stop', aliases=['disconnect'])
     # @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
@@ -371,7 +374,7 @@ class Music(commands.Cog):
 
         await ctx.voice_state.stop()
         del self.voice_states[ctx.guild.id]
-
+        await ctx.send(f"Tôi đi qua đời T_T, hung thủ là {ctx.author.name}")
     # @commands.command(name='volume')
     # async def _volume(self, ctx: commands.Context, *, volume: int):
     #     """Sets the volume of the player."""
@@ -548,12 +551,12 @@ class Music(commands.Cog):
     async def _play_error(self,ctx,error):
         if isinstance(error,commands.MissingRequiredArgument):
             await ctx.send('Lệnh sai cú pháp rồi pa: `~play tenbaihat | url`')
-    @_join.before_invoke
-    @_play.before_invoke
-    async def ensure_voice_state(self, ctx: commands.Context):
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            raise commands.CommandError('Bạn đang không ở trong kênh voice nào cả.')
+    # @_join.before_invoke
+    # async def ensure_voice_state(self, ctx: commands.Context):
+    #     if not ctx.author.voice:
+    #         raise commands.CommandError('Bạn đang không ở trong kênh voice nào cả.')
 
-        if ctx.voice_client:
-            if ctx.voice_client.channel != ctx.author.voice.channel:
-                raise commands.CommandError('Tôi đang ở trong voice rồi.')
+        # if ctx.voice_client:
+        #     if ctx.voice_client.channel != ctx.author.voice.channel:
+        #         raise commands.CommandError('Tôi đang ở trong voice rồi.')
+        pass
