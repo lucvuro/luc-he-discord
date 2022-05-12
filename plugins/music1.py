@@ -243,13 +243,14 @@ class VoiceState:
                 # If no song will be added to the queue in time,
                 # the player will disconnect due to performance
                 # reasons.
-                try:
-                    async with timeout(180):  # 3 minutes
-                        self.current = await self.songs.get()
-                except asyncio.TimeoutError:
-                    self.bot.loop.create_task(self.stop())
-                    return
 
+                # try:
+                #     async with timeout(180):  # 3 minutes
+                #         self.current = await self.songs.get()
+                # except asyncio.TimeoutError:
+                #     self.bot.loop.create_task(self.stop())
+                #     return
+                self.current = await self.songs.get()
                 # self.current.source.volume = self._volume
                 # self.voice.play(self.current.source, after=self.play_next_song)
                 self.voice.play(self.current.source, after=self.play_next_song)
@@ -265,23 +266,23 @@ class VoiceState:
 
         self.next.set()
 
-    async def skip(self):
-        self.skip_votes.clear()
+    # async def skip(self):
+    #     self.skip_votes.clear()
 
-        if self.is_playing:
-            self.voice.stop()
-            # list_song = enumerate(self.songs, 1)
-            try:
-                embed = (discord.Embed(title=f'{self._ctx.author} vừa skip 1 bài',
-                                description = f'[Previous]({self.current.source.url}): {self.current.source.title}\n[Next]({self.songs[0].source.url}): {self.songs[0].source.title}',
-                               color=discord.Color.blue()))
-                await self._ctx.send(embed=embed)
-            except IndexError:
-                embed = (discord.Embed(title=f'{self._ctx.author} vừa skip 1 bài',
-                                description = f'[Previous]({self.current.source.url}): {self.current.source.title}\nKhông còn nhạc để tui phát, tui đi đây',
-                               color=discord.Color.blue()))
-                await self._ctx.send(embed=embed)
-                await self.stop()
+    #     if self.is_playing:
+    #         self.voice.stop()
+    #         # list_song = enumerate(self.songs, 1)
+    #         try:
+    #             embed = (discord.Embed(title=f'{self._ctx.author} vừa skip 1 bài',
+    #                             description = f'[Previous]({self.current.source.url}): {self.current.source.title}\n[Next]({self.songs[0].source.url}): {self.songs[0].source.title}',
+    #                            color=discord.Color.blue()))
+    #             await self._ctx.send(embed=embed)
+    #         except IndexError:
+    #             embed = (discord.Embed(title=f'{self._ctx.author} vừa skip 1 bài',
+    #                             description = f'[Previous]({self.current.source.url}): {self.current.source.title}\nKhông còn nhạc để tui phát, tui đi đây',
+    #                            color=discord.Color.blue()))
+    #             await self._ctx.send(embed=embed)
+    #             await self.stop()
         # if len(self.songs) == 0:
         #     await self.stop()
         
@@ -364,7 +365,7 @@ class Music(commands.Cog):
 
     #     ctx.voice_state.voice = await destination.connect()
     #     await ctx.send("222222")
-    @commands.command(name='stop', aliases=['disconnect'])
+    @commands.command(name='stop')
     # @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
         """Clears the queue and leaves the voice channel."""
@@ -374,7 +375,7 @@ class Music(commands.Cog):
 
         await ctx.voice_state.stop()
         del self.voice_states[ctx.guild.id]
-        await ctx.send(f"Tôi đi qua đời T_T, hung thủ là {ctx.author.name}")
+        await ctx.send(f"Tôi đi qua đời T_T, hung thủ là **{ctx.author.name}**")
     # @commands.command(name='volume')
     # async def _volume(self, ctx: commands.Context, *, volume: int):
     #     """Sets the volume of the player."""
@@ -433,7 +434,21 @@ class Music(commands.Cog):
             return await ctx.send('Tôi đang ở ngoài, đưa tôi vô voice rồi tính tiếp.')
         if not ctx.voice_state.is_playing:
             return await ctx.send('Có gì đâu mà skip? Có bị đin hok?')
-        await ctx.voice_state.skip()
+        # await ctx.voice_state.skip()
+        if ctx.voice_state.is_playing:
+            ctx.voice_state.voice.stop()
+            # list_song = enumerate(self.songs, 1)
+            try:
+                embed = (discord.Embed(title=f'{ctx.author} vừa skip 1 bài',
+                                description = f'[Previous]({ctx.voice_state.current.source.url}): {ctx.voice_state.current.source.title}\n[Next]({ctx.voice_state.songs[0].source.url}): {ctx.voice_state.songs[0].source.title}',
+                               color=discord.Color.blue()))
+                await ctx.send(embed=embed)
+            except IndexError:
+                embed = (discord.Embed(title=f'{ctx.author} vừa skip 1 bài',
+                                description = f'[Previous]({ctx.voice_state.current.source.url}): {ctx.voice_state.current.source.title}\nKhông còn nhạc để tui phát, tui đi đây',
+                               color=discord.Color.blue()))
+                await ctx.send(embed=embed)
+                await ctx.voice_state.stop()
         # voter = ctx.message.author
         # if voter == ctx.voice_state.current.requester:
         #     await ctx.message.add_reaction('⏭')
@@ -452,7 +467,7 @@ class Music(commands.Cog):
         # else:
         #     await ctx.send('You have already voted to skip this song.')
 
-    @commands.command(name='queue')
+    @commands.command(name='queue',aliases=['q'])
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
         """Shows the player's queue.
         You can optionally specify the page to show. Each page contains 10 elements.
