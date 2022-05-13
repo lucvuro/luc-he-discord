@@ -16,6 +16,7 @@ pynacl = "*"
 python-dateutil = "*"
 ffmpeg = "*"
 wheel = "*"
+discord-components = "*"
 
 [dev-packages]
 ipykernel = "*"

@@ -1,5 +1,5 @@
 import os
-import json
+from discord_components import DiscordComponents, ComponentsBot, Button
 from discord import Embed,Attachment,Colour,Game
 from discord.ext import commands
 from discord.ext.forms import Form
@@ -7,18 +7,20 @@ from dotenv import load_dotenv
 import asyncpg
 import database
 from plugins.bandosao import BanDoSao
-from plugins import sleepyti,music1
+from plugins import sleepyti,music1,admin
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 my_whitelist = [883625186333704252,646989878055403521,881153070111809628,353167358388338699]
 activity = Game(name="~help")
 bot = commands.Bot(command_prefix="~",activity=activity, help_command=None)
+DiscordComponents(bot)
 @bot.check_once
 async def whitelist(ctx):
     return ctx.guild.id in my_whitelist
 bot.add_cog(database.DatabaseBANDOSAO(bot))
 bot.add_cog(sleepyti.sleep(bot))
 bot.add_cog(music1.Music(bot))
+# bot.add_cog(admin.AdminMenu(bot))
 #Connect to database
 async def create_db_pool():
     bot.db = await asyncpg.create_pool(dsn='postgres://lktbgprxgsumxy:a50f0706ca87bdaa5af8dced7615edc569a291de7d5fb221db417d3d6aadd4ec@ec2-52-3-200-138.compute-1.amazonaws.com:5432/d2jn5aebkji9uh')
@@ -78,7 +80,7 @@ async def help(ctx,*args):
             embed = Embed(colour=0x3498db,title="Lệnh play",description=f"Tìm nhạc rồi phát hoặc phát trực tiếp từ link")
             embed.add_field(name="Sử dụng",value=f"`~play` + tenbaihat\n`~play` + url")
             embed.add_field(name="Viết tắt",value=f"`~p`",inline=False)
-            embed.add_field(name="Các đối số truyền vào",value=f"* `~tenbaihat` có thể là nguyên cái tên bài hát hoặc từ khóa cũng được\n* `url` là link video, hiện tại chỉ xài được link **Youtube** mà thâu",inline=False)
+            embed.add_field(name="Các đối số truyền vào",value=f"* `tenbaihat` có thể là nguyên cái tên bài hát hoặc từ khóa cũng được\n* `url` là link video, hiện tại chỉ xài được link **Youtube** mà thâu",inline=False)
             await ctx.send(embed=embed)
             # Embed End
         elif args[0] == 'queue':
@@ -124,7 +126,14 @@ async def help(ctx,*args):
             # Embed Start
             embed = Embed(colour=0x3498db,title="Lệnh remove",description=f"Xóa 1 bài chỉ định ra khỏi danh sách nhạc")
             embed.add_field(name="Sử dụng",value=f"`~remove` + number")
-            embed.add_field(name="Các đối số truyền vào",value=f"* `~number` như tên đối số, là **1 con số** thứ tự của bài hát bạn muốn xóa",inline=False)
+            embed.add_field(name="Các đối số truyền vào",value=f"* `number` như tên đối số, là **1 con số** thứ tự của bài hát bạn muốn xóa",inline=False)
+            await ctx.send(embed=embed)
+            # Embed End
+        elif args[0] == 'move':
+            # Embed Start
+            embed = Embed(colour=0x3498db,title="Lệnh move",description=f"Chuyển thứ tự bài hát")
+            embed.add_field(name="Sử dụng",value=f"`~move` + index1 + index2")
+            embed.add_field(name="Các đối số truyền vào",value=f"* `index1` là thứ tự bài của bạn muốn chuyển\n* `index2` là thứ tự bạn muốn chuyển bài đó đến",inline=False)
             await ctx.send(embed=embed)
             # Embed End
         elif args[0] == 'join': #Ket thuc lenh bot music
@@ -138,7 +147,7 @@ async def help(ctx,*args):
         embed = Embed(colour=0x3498db,title="Danh sách lệnh")
         embed.add_field(name=":six_pointed_star: Chiêm Tinh",value=f"`taobandosao`, `bandosao`")
         embed.add_field(name=":bulb: Tiện Ích",value=f"`sleepyti`",inline=False)
-        embed.add_field(name=":musical_note: Âm Nhạc",value=f"`play`, `queue`, `skip`, `stop`, `loop`, `shuffle`, `nowplaying`, `remove`, `join`",inline=False)
+        embed.add_field(name=":musical_note: Âm Nhạc",value=f"`play`, `queue`, `skip`, `stop`, `loop`, `shuffle`, `nowplaying`, `remove`, `join`, `move`",inline=False)
         await ctx.send(embed=embed)
         # Embed End
 bot.loop.run_until_complete(create_db_pool())

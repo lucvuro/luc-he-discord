@@ -195,7 +195,10 @@ class SongQueue(asyncio.Queue):
 
     def shuffle(self):
         random.shuffle(self._queue)
-
+    def move(self, index1 :int, index2:int):
+        temp = self._queue[index1]
+        self._queue[index1] = self._queue[index2]
+        self._queue[index2] = temp
     def remove(self, index: int):
         del self._queue[index]
 
@@ -502,11 +505,26 @@ class Music(commands.Cog):
         ctx.voice_state.songs.shuffle()
         await ctx.send("Đã trộn list nhạc xong, mời bạn ăn")
 
+    @commands.command(name="move")
+    async def _move(self, ctx: commands.Context, index1: int, index2: int):
+        """Chuyển bài này từ vị trí index1 lên vị trí index 2"""
+        if not ctx.voice_state.voice:
+            return await ctx.send('Tôi đang ở ngoài, đưa tôi vô voice rồi tính tiếp.')
+        if index1 <= 0 or index2<=0:
+            return await ctx.send(f"Có khùm hok? Làm gì có bài nào số thứ tự <= 0")
+        if index1 == index2:
+            return await ctx.send(f"Lạ thiệt, chuyển từ vị trí **{index1}** qua vị trí **{index2}** làm chi zẫy, đứng im tại chỗ mà")
+        if len(ctx.voice_state.songs) <= 1:
+            return await ctx.send('Danh sách nhạc có ít hơn 2 bài thì move j zạ, có bị khùm hok?.')
+        await ctx.send(f"Đã chuyển **{ctx.voice_state.songs[index1-1].source.title}** từ thứ tự **{index1}** thành **{index2}**")
+        ctx.voice_state.songs.move(index1 - 1, index2 - 1)
+    @_move.error
+    async def _move_error(self,ctx,error):
+        if isinstance(error,commands.BadArgument) or isinstance(error,commands.MissingRequiredArgument  ):
+            await ctx.send("Lệnh sai cú pháp rồi pa: `~move index1 index2`")
     @commands.command(name='remove')
     async def _remove(self, ctx: commands.Context, index: int):
         """Removes a song from the queue at a given index."""
-        if not isinstance(index,int):
-            return await ctx.send(f"{index} không phải là 1 số hợp lệ")
         if not ctx.voice_state.voice:
             return await ctx.send('Tôi đang ở ngoài, đưa tôi vô voice rồi tính tiếp.')
         if index <= 0:
